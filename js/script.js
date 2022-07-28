@@ -14,15 +14,15 @@ fetch("http://localhost:3000/api/products")
             // Affichage des produits dans le DOM
             document.querySelector(".items").innerHTML += `
             <a href="./product.html?${product._id}">
-            <article>
-              <img src="${product.imageUrl}" alt="${product.altTxt}">
-              <h3 class="productName">${product.name}</h3>
-              <p class="productDescription">${product.description}</p>
-            </article>
-          </a>
+                <article>
+                <img src="${product.imageUrl}" alt="${product.altTxt}">
+                <h3 class="productName">${product.name}</h3>
+                <p class="productDescription">${product.description}</p>
+                </article>
+            </a>
             `;
         }
-        console.log(jsonListProduct)
+        console.log('affichage du tableau', jsonListProduct)
     });
 
     // Objet Product
