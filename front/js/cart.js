@@ -7,8 +7,8 @@ const sectionProduct = document.querySelector('#cart__items');
 console.log('ma balise section dans laquelle je vais injecter du code => ', sectionProduct);
 
 // si le panier est vide : afficher le panier est vide
-if(productTable === null){
-    console.log('je suis vide');
+if(productTable === null || productTable == 0){
+    console.log('Je suis un panier vide =>');
     const emptyBasket = document.createElement("div");
     emptyBasket.setAttribute("class", "container-empty-basket");
     sectionProduct.appendChild(emptyBasket);
@@ -20,6 +20,14 @@ if(productTable === null){
     // si le panier nb'est pas vide, alors il faut afficher les produits dans le local storage
     let ProductBasket = [];
     for(i = 0; i < productTable.length; i++){
+        // chercher le bon produit
+        //console.log('produit =>', productTable[i].replace('"', ''));
+        fetch(`http://localhost:3000/api/products/${(productTable[i].id)}`)
+        .then((response) => response.json())
+        .then((promiseProduct) => {
+            console.log(promiseProduct);
+        })
+// AFFICHER LES PRODUITS DANS LE PANIER
 
         // Création de <article>
         const newArticleProduct = document.createElement("article");
@@ -100,9 +108,89 @@ if(productTable === null){
         newDivDelete.appendChild(newParagrapheDelete);
         newParagrapheDelete.textContent = "Supprimer";
 
-        console.log('nombre de produits dans le local storage : ', productTable.length);
+        console.log('Nombre de produits dans le local storage : ', productTable.length);
     }
-    console.log('je ne suis pas vide');
-    
-    
+    console.log('Je ne suis plus un panier vide');
 }
+
+
+
+// BOUTON SUPPRIMER
+let btnDelete = document.querySelectorAll(".deleteItem");
+console.log(btnDelete);
+
+for(let j = 0; j < btnDelete.length; j++){
+    btnDelete[j].addEventListener("click", (event) =>{
+        event.preventDefault();
+        console.log(event);
+
+        let selectDelete = productTable[j]._id && productTable[j].colors;
+        console.log(selectDelete);
+        console.log("selectDelete");
+
+        productTable = productTable.filter( element => element._id && element.colors !== selectDelete);
+            console.log(productTable);
+
+        // Envoie la variable dans le local storage
+        localStorage.setItem("product", JSON.stringify(productTable));
+
+        // Suppression du produit et rechargement de la page
+        alert("Ce produit sera supprimé du panier.");
+        window.location.href = "./cart.html";
+    })
+}
+
+
+// MONTANT TOTAL DU PANIER
+let calculTotalPrice = [];
+
+// récupérer les prix du panier
+for(let k = 0; k < productTable?.length; k++){
+    let priceProductsBasket = productTable[k].price;
+
+    // Ajouter prix du panier dans la variable TotalPrice
+    calculTotalPrice.push(priceProductsBasket)
+}
+
+// Additionner les prix dans la variable TotalPrice
+const reducer = (accumulator, currentValue) => accumulator + currentValue;
+const totalPrice = calculTotalPrice.reduce(reducer, 0);
+console.log('Total du panier', totalPrice);
+
+// Affichage dans le DOM
+const displayTotalPrice = `<p>Total (<span id="totalQuantity"><!-- 2 --></span> articles) : <span id="totalPrice">${totalPrice}</span> €</p>`
+const cartPrice = document.querySelector(".cart__price");
+cartPrice.innerHTML= displayTotalPrice;
+
+
+// FORMULAIRE DE COMMANDE
+const btnCommander = document.querySelector("#order");
+
+// Gestionnaire d'événnement
+btnCommander.addEventListener("click", (e) =>{
+    e.preventDefault(); // A RETIRER A LA FIN DU PROJET
+    
+    localStorage.setItem("firstName", document.querySelector("#firstName").value);
+    localStorage.setItem("lastName", document.querySelector("#lastName").value);
+    localStorage.setItem("address", document.querySelector("#address").value);
+    localStorage.setItem("city", document.querySelector("#city").value);
+    localStorage.setItem("email", document.querySelector("#email").value);
+
+    // Récupération des valeurs du formulaire dans un objet
+    const form = {
+        firstName: localStorage.getItem("firstName"),
+        lastName: localStorage.getItem("lastName"),
+        address: localStorage.getItem("address"),
+        city: localStorage.getItem("city"),
+        email: localStorage.getItem("email")
+    }
+    console.log('données du formulaire', form);
+
+
+    // AJOUTER VALEURS DU FORMULAIRE ET PRODUITS SELECTIONNES VERS LE SERVEUR
+    const sendData = {
+        productTable,
+        form
+    }
+    console.log('Envoi des données suivantes : =>', sendData);
+})

@@ -1,5 +1,6 @@
 // Récupération du produit par ID
 const product = window.location.search.split("?").join("");
+console.log('product in product js', product);
 //console.log('ici mon produit par ID =>', product);
 
 // Création table vide
@@ -92,18 +93,26 @@ const addBasket = () => {
     let bouton = document.getElementById(productData._id);
     //console.log(bouton);
     bouton.addEventListener("click", () => {
+        alert("le produit sera ajouté.")
         // json en format js avec parse
         let productTable = JSON.parse(localStorage.getItem("product")) || [];
-        let select = document.getElementById("colors");
-        console.log('affiche la couleur choisie =>', select.value);
+        const selectColor = document.getElementById("colors");
+        const selectQuantity = document.getElementById("quantity");      
+        console.log('affiche la couleur choisie =>', selectColor.value);
         console.log('affiche la valeur du tableau =>', productTable);
 
-        const fusionProductColors = Object.assign({}, productData, {
-            colors: `${select.value}`,
-            quantity: 1,
-        });
+        const storageProduct = {
+            colors: `${selectColor.value}`,
+            quantity: `${selectQuantity.value}`,
+            id: `${product}`
+        }
+
+        // const fusionProductColors = Object.assign({}, productData, {
+        //     colors: `${select.value}`,
+        //     quantity: 1,
+        // });
         //console.log(fusionProductColors);
-        productTable.push(fusionProductColors);
+        productTable.push(storageProduct);
         console.log(productTable);
         // js en format json avec stringify
         localStorage.setItem("product", JSON.stringify(productTable));
