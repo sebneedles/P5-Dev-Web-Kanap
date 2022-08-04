@@ -97,14 +97,19 @@ const addBasket = () => {
         // json en format js avec parse
         let productTable = JSON.parse(localStorage.getItem("product")) || [];
         const selectColor = document.getElementById("colors");
-        const selectQuantity = document.getElementById("quantity");      
+        const selectQuantity = document.getElementById("quantity");
+        // TEST : ajout de name dans LS
+        const selectName = document.querySelector("h1#title");   
         console.log('affiche la couleur choisie =>', selectColor.value);
+        console.log('affiche le nom du produit =>', productData.name);
         console.log('affiche la valeur du tableau =>', productTable);
 
         const storageProduct = {
             colors: `${selectColor.value}`,
             quantity: `${selectQuantity.value}`,
-            id: `${product}`
+            // test avec name
+            name: productData.name,
+            id: productData._id
         }
 
         // const fusionProductColors = Object.assign({}, productData, {

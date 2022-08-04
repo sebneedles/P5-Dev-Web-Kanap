@@ -17,7 +17,7 @@ if(productTable === null || productTable == 0){
     emptyBasketText.textContent = "Le panier est vide :-(";
     emptyBasket.appendChild(emptyBasketText);
 } else {
-    // si le panier nb'est pas vide, alors il faut afficher les produits dans le local storage
+    // si le panier n'est pas vide, alors il faut afficher les produits dans le local storage
     let ProductBasket = [];
     for(i = 0; i < productTable.length; i++){
         // chercher le bon produit
@@ -25,16 +25,18 @@ if(productTable === null || productTable == 0){
         fetch(`http://localhost:3000/api/products/${(productTable[i].id)}`)
         .then((response) => response.json())
         .then((promiseProduct) => {
-            console.log(promiseProduct);
+            
+            console.log('C\'est quoi ce truc ?', promiseProduct);
         })
 // AFFICHER LES PRODUITS DANS LE PANIER
 
         // Création de <article>
         const newArticleProduct = document.createElement("article");
         newArticleProduct.setAttribute("class", "cart__item");
-        newArticleProduct.setAttribute("data-id", `${productTable[i]._id}`);
-        newArticleProduct.setAttribute("data-color", `${productTable[i].colors}`);
+        newArticleProduct.setAttribute("data-id", `${productTable[i].id}`); // OK, s'affiche dans HTML et LS
+        newArticleProduct.setAttribute("data-color", `${productTable[i].colors}`); // OK, s'affiche dans HTML et LS
         sectionProduct.appendChild(newArticleProduct);
+        //console.log('C\'est quoi ce truc là ?', newArticleProduct);
 
         // Création de <div class="cart__item__content">
         const newDivImg = document.createElement("div");
@@ -59,12 +61,12 @@ if(productTable === null || productTable == 0){
 
         // Création de <h2>Nom du produit</h2>
         const newTitleDescription = document.createElement('h2');
-        newTitleDescription.textContent = `${productTable[i].name}`;
+        newTitleDescription.textContent = `${productTable[i].name}`; // OK, s'affiche dans HTML et LS
         newDivDescription.appendChild(newTitleDescription);
 
         // Création de <p>couleur</p>
         const newParagrapheColor = document.createElement('p');
-        newParagrapheColor.textContent = `${productTable[i].colors}`;
+        newParagrapheColor.textContent = `${productTable[i].colors}`; // OK, s'affiche dans HTML et LS
         newDivDescription.appendChild(newParagrapheColor);
 
         // Création de <p>prix €</p>
@@ -94,7 +96,7 @@ if(productTable === null || productTable == 0){
         newInput.setAttribute("name", "itemQuantity");
         newInput.setAttribute("min", "1");
         newInput.setAttribute("max", "100");
-        newInput.setAttribute("value", `${productTable[i].quantity}`);
+        newInput.setAttribute("value", `${productTable[i].quantity}`); // OK, s'affiche dans HTML et LS
         newDivQuantity.appendChild(newInput);
 
         // Création de <div class="cart__item__content__settings__delete">
