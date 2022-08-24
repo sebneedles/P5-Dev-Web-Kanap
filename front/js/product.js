@@ -1,4 +1,6 @@
-// Récupération du produit par ID
+/* -------------------------------------------------------------------------------- 
+Récupération du produit par ID
+-------------------------------------------------------------------------------- */
 const product = window.location.search.split("?").join("");
 console.log('ID du produit =>', product);
 
@@ -23,7 +25,7 @@ const productDisplay = async () => {
     await fetchProduct();
 
     // Changement des éléments du <head></head> : META TITLE
-    newPageTitle = `Kanap | ${productData.name}`;
+    newPageTitle = `${productData.name} | Votre selection KANAP`;
     document.title = newPageTitle;
     // Changement des éléments du <head></head> : META DESCRIPTION
     const meta = document.getElementsByTagName('meta')  
@@ -74,11 +76,7 @@ const productDisplay = async () => {
     addBasket(productData);
 };
 
-// Appel de la fonction
 productDisplay();
-/* -------------------------------------------------------------------------------- 
-FIN AFFICHAGE DES ELEMENTS DU PRODUIT
--------------------------------------------------------------------------------- */
 
 
 /* -------------------------------------------------------------------------------- 
@@ -89,9 +87,7 @@ const addBasket = () => {
     let bouton = document.getElementById(productData._id);
     
     bouton.addEventListener("click", () => {
-        alert("le produit sera ajouté.")
 
-        // json en format js avec parse
         let productTable = JSON.parse(localStorage.getItem("product")) || [];
         const selectColor = document.getElementById("colors");
         const selectQuantity = document.getElementById("quantity");  
@@ -104,13 +100,14 @@ const addBasket = () => {
             id: productData._id
         }
 
-        productTable.push(storageProduct);
-        console.log(productTable);
-        // js en format json avec stringify
-        localStorage.setItem("product", JSON.stringify(productTable));
+        alert(`
+        Le produit ${productData.name} sera ajouté au panier.\n
+        Voir le panier`);
+        location = "./cart.html";
 
+        productTable.push(storageProduct);
+        console.log('produits ajoutés au localStorage =>', productTable);
+        localStorage.setItem("product", JSON.stringify(productTable));
+        
     });
 };
-/* -------------------------------------------------------------------------------- 
-FIN FONCTION QUI AJOUTE LE PRODUIT AU PANIER
--------------------------------------------------------------------------------- */

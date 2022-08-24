@@ -1,166 +1,183 @@
 /* -------------------------------------------------------------------------------- 
-AFFICHAGE DES PRODUITS DEPUIS LOCALSTORAGE
+RECUPERATION DES PRODUITS DEPUIS LOCALSTORAGE
 -------------------------------------------------------------------------------- */
 let productTable = JSON.parse(localStorage.getItem("product"));
 console.log('Produits récupérés depuis localStorage =>', productTable);
 
-// Dans le sélecteur <section></section>, on affiche les produits
-const sectionProduct = document.querySelector('#cart__items');
+
+/* -------------------------------------------------------------------------------- 
+// MODIFICATION DU TITLE DANS <head></head>
+-------------------------------------------------------------------------------- */
+document.title = "KANAP | Votre panier ";
 
 
 /* -------------------------------------------------------------------------------- 
-CONDITION
+RECUPERATION DES PRODUITS HORS LOCALSTORAGE
 -------------------------------------------------------------------------------- */
-if(productTable === null || productTable == 0){
+let productsData = [];
 
-    // Si panier vide = afficher dans le DOM
-    const emptyBasket = document.createElement("div");
-    emptyBasket.setAttribute("class", "container-empty-basket");
-    sectionProduct.appendChild(emptyBasket);
-    const emptyBasketText = document.createElement("p");
-    emptyBasketText.textContent = "Le panier est vide :-(";
-    emptyBasket.appendChild(emptyBasketText);
+const getProductsData = async () => {
 
-} else { // Sinon panier contient un produit = afficher le produit
-    console.log('Le panier n\'est plus vide :-)');
-    //let ProductBasket = [];
+    const result = await fetch(`http://localhost:3000/api/products`);
+    productsData = await result.json();
+    console.log('Produits récupérés depuis API =>', productsData);
 
-    /* -------------------------------------------------------------------------------- 
-    BOUTON SUPPRIMER
-    -------------------------------------------------------------------------------- */
-    function removeProduct(value){
-        console.log(value);
-        const removeItem = document.querySelectorAll(".deleteItem");
-        console.log('Ce bouton ...', removeItem);
+    // Si le panier est vide afficher ceci
+    if (productTable.length === 0) {
+        document.getElementById('cart__items').insertAdjacentHTML('beforeend', `<p>Votre panier est vide. :-(</p>`);
+        document.getElementById('cart__items').style.textAlign = "center";
+        return
+    }
+    // Sinon, afficher les éléments du localStorage
+    else {
+        let totalPrice = 0;
+        // Boucle pour récupérer les produits du localStorage
+        for (let i = 0; i < productTable.length; i++) {
+            const kanapStorage = productTable[i];
+            const kanapApi = productsData.find(data => data._id === kanapStorage.id);
 
-        for(let j = 0; j < removeItem.length; j++){
-            removeItem[j].addEventListener("click", (event) =>{
-                event.preventDefault();
+            // Calcul du prix total directement à chaque boucle.
+            totalPrice += productTable[i].quantity * kanapApi.price;
+            let totalPriceElement = document.getElementById('totalPrice');
+            totalPriceElement.textContent = totalPrice;
+            console.log('Prix total du panier à chaque fois / produit =>', totalPrice);
 
-                let selectDeleteItem = productTable[j].id;
-                console.log('cest quoi ?', selectDeleteItem);
-
-            })
+            displayProductsBasket(kanapStorage, kanapApi);
         }
     }
-    
+}
+getProductsData()
 
-    for(let i = 0; i < productTable.length; i++){
-        // FETCH LE BON PRODUIT
-        fetch(`http://localhost:3000/api/products/${(productTable[i].id)}`)
-        .then((response) => response.json())
-        .then((promiseProduct) => {
-            
-            console.log('Récupération du produit =>', promiseProduct);
 
-            /* -------------------------------------------------------------------------------- 
-            AFFICHER LES PRODUITS DANS LE PANIER
-            -------------------------------------------------------------------------------- */
-            
-            // <article>
-            const newArticleProduct = document.createElement("article");
-            newArticleProduct.setAttribute("class", "cart__item");
-            newArticleProduct.setAttribute("data-id", `${promiseProduct._id}`);
-            newArticleProduct.setAttribute("data-color", `${promiseProduct.colors}`);
-            sectionProduct.appendChild(newArticleProduct);
+/* -------------------------------------------------------------------------------- 
+AFFICHER LES PRODUITS DANS LE DOM
+-------------------------------------------------------------------------------- */
+const displayProductsBasket = (productStorage, productApi) => {
 
-            // <div class="cart__item__content">
-            const newDivImg = document.createElement("div");
-            newDivImg.setAttribute("class", "cart__item__img");
-            newArticleProduct.appendChild(newDivImg);
+    // <article></article>
+    let newArticleProduct = document.createElement("article");
+    document.getElementById('cart__items').appendChild(newArticleProduct);
+    newArticleProduct.className = "cart__item";
+    newArticleProduct.setAttribute('data-id', productStorage.id);
+    newArticleProduct.setAttribute('data-color', productStorage.colors);
 
-            // <img src="" alt="">
-            const newImgProduct = document.createElement("img");
-            newImgProduct.setAttribute("src", `${promiseProduct.imageUrl}`);
-            newImgProduct.setAttribute("alt", `${promiseProduct.altTxt}`);
-            newDivImg.appendChild(newImgProduct);
+    // <div><img /></div> : IMAGE
+    let newDivImg = document.createElement("div");
+    newArticleProduct.appendChild(newDivImg);
+    newDivImg.className = "cart__item__img";
+    let cartImg = document.createElement("img");
+    newDivImg.appendChild(cartImg);
+    cartImg.src = productApi.imageUrl;
+    cartImg.alt = productApi.altTxt;
 
-            // <div class="cart__item__content">
-            const newDivContent = document.createElement('div');
-            newDivContent.setAttribute("class", "cart__item__content");
-            newArticleProduct.appendChild(newDivContent);
+    // Description Bloc 
+    let newDivContent = document.createElement("div");
+    newDivContent.className = 'cart__item__content';
+    newArticleProduct.appendChild(newDivContent);
+    let divItemDescription = document.createElement('div');
+    newDivContent.appendChild(divItemDescription);
+    divItemDescription.className = 'cart__item__content__description';
 
-            // <div class="cart__item__content__description">
-            const newDivDescription = document.createElement('div');
-            newDivDescription.setAttribute("class", "cart__item__content__description");
-            newDivContent.appendChild(newDivDescription);
+    // Titre h2
+    let newTitleDescription = document.createElement("h2");
+    newTitleDescription.textContent = productApi.name;
+    divItemDescription.appendChild(newTitleDescription);
 
-            // <h2>Nom du produit</h2>
-            const newTitleDescription = document.createElement('h2');
-            newTitleDescription.textContent = `${promiseProduct.name}`;
-            newDivDescription.appendChild(newTitleDescription);
+    // Couleur
+    let newParagrapheColor = document.createElement('p');
+    newParagrapheColor.textContent = productStorage.colors;
+    divItemDescription.appendChild(newParagrapheColor);
 
-            // <p>couleur</p>
-            const newParagrapheColor = document.createElement('p');
-            newParagrapheColor.textContent = `${productTable[i].colors}`;
-            newDivDescription.appendChild(newParagrapheColor);
+    // Prix
+    let newParagraphePrice = document.createElement('p');
+    newParagraphePrice.textContent = productApi.price + ' ' + '€';
+    divItemDescription.appendChild(newParagraphePrice);
 
-            // <p>prix €</p>
-            const newParagraphePrice = document.createElement('p');
-            newParagraphePrice.textContent = `${promiseProduct.price} €`;
-            newDivDescription.appendChild(newParagraphePrice);
+    // Bloc Settings
+    let newDivSetting = document.createElement('div');
+    newDivSetting.className = 'cart__item__content__settings';
+    newDivContent.appendChild(newDivSetting);
 
-            // <div class="cart__item__content__settings">
-            const newDivSetting = document.createElement('div');
-            newDivSetting.setAttribute("class", "cart__item__content__settings");
-            newDivContent.appendChild(newDivSetting);
+    // Quantité
+    let newDivQuantity = document.createElement('div');
+    newDivQuantity.className = 'cart__item__content__settings__quantity';
+    newDivSetting.appendChild(newDivQuantity);
+    let newParagrapheQuantity = document.createElement('p');
+    newParagrapheQuantity.textContent = 'Qte : ';
+    newDivQuantity.appendChild(newParagrapheQuantity);
 
-            // <div class="cart__item__content__settings__quantity">
-            const newDivQuantity = document.createElement('div');
-            newDivQuantity.setAttribute("class", "cart__item__content__settings__quantity");
-            newDivSetting.appendChild(newDivQuantity);
+    // Quantité <input>
+    let newInput = document.createElement('input');
+    newInput.setAttribute("type", "number");
+    newInput.setAttribute("name", "itemQuantity");
+    newInput.setAttribute("min", 1);
+    newInput.setAttribute("max", 100);
+    newInput.setAttribute("value", productStorage.quantity);
+    newInput.classname = 'itemQuantity';
+    newDivQuantity.appendChild(newInput);
 
-            // <p>Qté : </p>
-            const newParagrapheQuantity = document.createElement('p');
-            newParagrapheQuantity.textContent = "Qté : ";
-            newDivQuantity.appendChild(newParagrapheQuantity);
+    // Settings bloc : remove quantity
+    let removeQuantity = document.createElement('div');
+    removeQuantity.className = 'cart__item__content__settings__delete';
+    newDivSetting.appendChild(removeQuantity);
+    let removeQuantityButton = document.createElement('p');
+    removeQuantityButton.className = 'deleteItem';
+    removeQuantityButton.textContent = 'Supprimer';
+    removeQuantityButton.setAttribute("id", `${productStorage.id && productStorage.colors}`)
+    removeQuantity.appendChild(removeQuantityButton);
 
-            // <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="42">
-            const newInput = document.createElement('input');
-            newInput.setAttribute("type", "number");
-            newInput.setAttribute("class", "itemQuantity");
-            newInput.setAttribute("name", "itemQuantity");
-            newInput.setAttribute("min", "1");
-            newInput.setAttribute("max", "100");
-            newInput.setAttribute("value", `${productTable[i].quantity}`);
-            newDivQuantity.appendChild(newInput);
 
-            // <div class="cart__item__content__settings__delete">
-            const newDivDelete = document.createElement('div');
-            newDivDelete.setAttribute("class", "cart__item__content__settings__delete");
-            newDivSetting.appendChild(newDivDelete);
+    /* -------------------------------------------------------------------------------- 
+    MODIFIER LA QUANTITE
+    -------------------------------------------------------------------------------- */
+    newInput.addEventListener('change', function (qtt) {
+        console.log('Affiche l\'evennement qtt =>', qtt);
+        productStorage.quantity = newInput.value;
+        
+            localStorage.setItem("product", JSON.stringify(productTable));
+            location.reload();
 
-            // <p class="deleteItem">Supprimer</p>
-            const newParagrapheDelete = document.createElement('p');
-            newParagrapheDelete.setAttribute("class", "deleteItem");
-            newParagrapheDelete.setAttribute("onclick", "removeProduct(this)");
-            newDivDelete.appendChild(newParagrapheDelete);
-            newParagrapheDelete.textContent = "Supprimer";
-            
-        })
-        console.log('Nombre de produits dans le local storage : ', productTable.length);
-    }
+            console.log('Affiche le panier avec la nouvelle quantité ajoutée =>', productStorage.quantity);
+    })
+
+
+    /* -------------------------------------------------------------------------------- 
+    SUPPRIMER UN PRODUIT
+    -------------------------------------------------------------------------------- */
+    removeQuantityButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        console.log('evenement qui supprime le produit =>', event);
+
+        let productStorageRemoveId = productStorage.id;
+        let productStorageRemoveColors = productStorage.colors;
+        console.log(productStorageRemoveId);
+        console.log(productStorageRemoveColors)
+
+        productTable = productTable.filter(element => element.id !== productStorageRemoveId || element.colors !== productStorageRemoveColors);
+        localStorage.setItem("product", JSON.stringify(productTable));
+        event.target.closest('.cart__item').remove();
+        alert(`Le modèle ${productApi.name} à été retiré du panier !`);
+        location.reload();
+        console.log(productTable)
+    })
+
+    getTotalProducts()
 }
 
-/* -------------------------------------------------------------------------------- 
-AFFICHAGE PRIX TOTAL
--------------------------------------------------------------------------------- */
-
-
-
-
-
-
-    
-
-
-
 
 /* -------------------------------------------------------------------------------- 
-GERER LA QUANTITE
+AFFICHER LA QUANTITE ET PRIX TOTAL
 -------------------------------------------------------------------------------- */
+async function getTotalProducts() {
 
+    let productQuantity = productTable;
+    let totalQuantity = 0
 
-/* -------------------------------------------------------------------------------- 
-FORMULAIRE DE COMMANDE
--------------------------------------------------------------------------------- */
+    for (let product of productQuantity) {
+        totalQuantity += Number(product.quantity);
+    }
+
+    let quantityItemTotal = document.getElementById('totalQuantity');
+    quantityItemTotal.textContent = totalQuantity
+    console.log('Total article =>', totalQuantity);
+}
