@@ -89,6 +89,8 @@ const addBasket = () => {
     bouton.addEventListener("click", () => {
 
         let productTable = JSON.parse(localStorage.getItem("product")) || [];
+
+
         const selectColor = document.getElementById("colors");
         const selectQuantity = document.getElementById("quantity");  
         console.log('affiche la couleur choisie =>', selectColor.value);
@@ -100,14 +102,56 @@ const addBasket = () => {
             id: productData._id
         }
 
-        alert(`
-        Le produit ${productData.name} sera ajouté au panier.\n
-        Voir le panier`);
-        location = "./cart.html";
+        /* -------------------------------------------------------------------------------- 
+        SI AUCUNE OPTIONS N'EST CHOISIE
+        -------------------------------------------------------------------------------- */
+        if (Number(storageProduct.quantity) <= 0 || (storageProduct.quantity) > 100 || (storageProduct.colors) == '') {
+            alert('Choisissez une couleur et une quantité (entre en 1 et 100)');
+            return
+        }
 
-        productTable.push(storageProduct);
+        /* -------------------------------------------------------------------------------- 
+        FENETRE ALERT => AJOUT AU PANIER
+        -------------------------------------------------------------------------------- */
+        const windowConfirmBasket = () => {
+            console.log("coucou");
+            if (window.confirm(`Le produit ${productData.name} sera ajouté au panier :
+            OK => pour voir le panier ?
+            Annuler => pour retourner au catalogue ?
+            `)) {
+                window.location.href = "./cart.html";
+            } else {
+                window.location.href = "./index.html";
+            }
+        }
+        // alert(`
+        // Le produit ${productData.name} sera ajouté au panier.\n
+        // Voir le panier`);
+        // location = "./cart.html";
+
+
+        /* -------------------------------------------------------------------------------- 
+        SI IL Y A UN MEME PRODUIT !!
+        -------------------------------------------------------------------------------- */
+        if (productTable) {
+            console.log('storage product avant =>', storageProduct);
+            let sameProductId = productTable.find(myProduct => myProduct.id == storageProduct.id && myProduct.colors == storageProduct.colors);
+            if (sameProductId != undefined) {
+                console.log('produit ID =>', sameProductId);
+                console.log('total quantité produit =>', Number(storageProduct.quantity) + Number(sameProductId.quantity));
+                sameProductId.quantity = `${Number(storageProduct.quantity) + Number(sameProductId.quantity)}`;
+                console.log('storage product après =>', storageProduct);
+                
+            }
+            else {
+                productTable.push(storageProduct);
+                
+            }
+        }
+
         console.log('produits ajoutés au localStorage =>', productTable);
         localStorage.setItem("product", JSON.stringify(productTable));
-        
+        windowConfirmBasket();
     });
+
 };

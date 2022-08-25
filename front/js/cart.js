@@ -161,12 +161,13 @@ const displayProductsBasket = (productStorage, productApi) => {
         console.log(productTable)
     })
 
-    getTotalProducts()
+
+    getTotalProducts();
 }
 
 
 /* -------------------------------------------------------------------------------- 
-AFFICHER LA QUANTITE ET PRIX TOTAL
+AFFICHER LA QUANTITE ET LE PRIX TOTAL
 -------------------------------------------------------------------------------- */
 async function getTotalProducts() {
 
@@ -181,3 +182,162 @@ async function getTotalProducts() {
     quantityItemTotal.textContent = totalQuantity
     console.log('Total article =>', totalQuantity);
 }
+
+
+/* -------------------------------------------------------------------------------- 
+FORMULAIRE D'ENVOI
+-------------------------------------------------------------------------------- */
+let order = document.getElementById("order");
+let valueOrder;
+
+// Input firstName
+let firstName = document.getElementById("firstName");
+let messErrorFirstName = document.getElementById("firstNameErrorMsg");
+firstName.addEventListener("input", (e) => {
+    let valueFirstName;
+    if (e.target.value.length == 0) {
+        valueFirstName = null;
+    }
+    else if (e.target.value.length < 3 || e.target.value.length > 30) {
+        messErrorFirstName.textContent = "Le prénom doit contenir entre 3 et 30 caractères.";
+        messErrorFirstName.style.color = "#fbbcbc";
+        valueFirstName = null;
+    }
+    if (e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{3,30}$/)) {
+        messErrorFirstName.textContent = "Le prénom est valide.";
+        messErrorFirstName.style.color = "#4dff00";
+        valueFirstName = e.target.value;
+    }
+    if (!e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{3,30}$/) && e.target.value.length > 3 && e.target.value.length < 30) {
+        messErrorFirstName.textContent = "Le prénom ne doit pas contenir de caratères spéciaux.";
+        messErrorFirstName.style.color = "#fbbcbc";
+        valueFirstName = null;
+    }
+})
+
+// Input lasttName
+let lasttName = document.getElementById("lastName");
+let messErrorLastName = document.getElementById("lastNameErrorMsg");
+lasttName.addEventListener("input", (e) => {
+    let valueLastName;
+    if (e.target.value.length == 0) {
+        valueLastName = null;
+    }
+    else if (e.target.value.length < 3 || e.target.value.length > 30) {
+        messErrorLastName.textContent = "Le nom doit contenir entre 3 et 30 caractères.";
+        messErrorLastName.style.color = "#fbbcbc";
+        valueLastName = null;
+    }
+    if (e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{3,30}$/)) {
+        messErrorLastName.textContent = "Le nom est valide.";
+        messErrorLastName.style.color = "#4dff00";
+        valueLastName = e.target.value;
+    }
+    if (!e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{3,30}$/) && e.target.value.length > 3 && e.target.value.length < 30) {
+        messErrorLastName.textContent = "Le nom ne doit pas contenir de caratères spéciaux.";
+        messErrorLastName.style.color = "#fbbcbc";
+        valueLastName = null;
+    }
+})
+
+// Inout address
+let address = document.getElementById("address");
+let messErrorAddress = document.getElementById("addressErrorMsg");
+address.addEventListener("input", (e) => {
+    let valueAddress;
+    if (e.target.value.length == 0) {
+        valueAddress = null;
+    }
+    else if (e.target.value.length < 10 || e.target.value.length > 70) {
+        messErrorAddress.textContent = "L'adresse doit contenir entre 10 et 70 caractères.";
+        messErrorAddress.style.color = "#fbbcbc";
+        valueAddress = null;
+    }
+    if (e.target.value.match(/^[a-z A-Z 0-9 éèàâêîôûçäëïöü - ']{10,70}$/)) {
+        messErrorAddress.textContent = "l'adresse est valide.";
+        messErrorAddress.style.color = "#4dff00";
+        valueAddress = e.target.value;
+    }
+    if (!e.target.value.match(/^[a-z A-Z 0-9 éèàâêîôûçäëïöü - ']{10,70}$/) && e.target.value.length > 10 && e.target.value.length < 70) {
+        messErrorAddress.textContent = "L'adresse ne doit pas contenir de caratères spéciaux.";
+        messErrorAddress.style.color = "#fbbcbc";
+        valueAddress = null;
+    }
+})
+
+// Input city
+let city = document.getElementById("city");
+let messErrorCity = document.getElementById("cityErrorMsg");
+city.addEventListener("input", (e) => {
+    let valueCity;
+    if (e.target.value.length == 0) {
+        valueCity = null;
+    }
+    else if (e.target.value.length < 2 || e.target.value.length > 30) {
+        messErrorCity.textContent = "La ville doit contenir entre 2 et 30 caractères.";
+        messErrorCity.style.color = "#fbbcbc";
+        valueCity = null;
+    }
+    if (e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{2,30}$/)) {
+        messErrorCity.textContent = "La ville est valide.";
+        messErrorCity.style.color = "#4dff00";
+        valueCity = e.target.value;
+    }
+    if (!e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{2,30}$/) && e.target.value.length > 2 && e.target.value.length < 30) {
+        messErrorCity.textContent = "La ville ne doit pas contenir de caratères spéciaux.";
+        messErrorCity.style.color = "#fbbcbc";
+        valueCity = null;
+    }
+})
+
+// Input email
+let email = document.getElementById("email");
+email.addEventListener("input", (e) => {
+    let messErrorEmail = document.getElementById("emailErrorMsg");
+    let valueEmail;
+    if (e.target.value.length == 0) {
+        messErrorEmail.textContent = "";
+        valueEmail = null;
+    }
+    else if (e.target.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+        messErrorEmail.textContent = "";
+        valueEmail = e.target.value;
+    }
+    if (e.target.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+        messErrorEmail.textContent = "L'email est valide";
+        messErrorEmail.style.color = "#4dff00";
+        valueEmail = e.target.value;
+    }
+    if (!e.target.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/) && !e.target.value.length == 0) {
+        messErrorEmail.textContent = "L'email n'est pas valide";
+        messErrorEmail.style.color = "#fbbcbc";
+        valueEmail = null;
+    }
+})
+
+// Bouton Commander !
+const btnEnvoiCommande = document.getElementById("order");
+
+btnEnvoiCommande.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    // Récupérer les données du formulaire
+    const formValues = {
+        prenom : document.querySelector("#firstName").value,
+        nom : document.querySelector("#lastName").value,
+        adresse : document.querySelector("#address").value,
+        ville : document.querySelector("#city").value,
+        email : document.querySelector("#email").value
+    }
+
+    // Insérer les données dans le localStorage
+    localStorage.setItem("formValues", JSON.stringify(formValues));
+
+    // Envoyer toutes les données (formulaire et produits) vers confirmation
+    const sendToConfirmation = {
+        productTable,
+        formValues
+    }
+    console.log('Envoyer vers la page confirmation', sendToConfirmation);
+})
+
