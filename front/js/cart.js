@@ -23,7 +23,7 @@ const getProductsData = async () => {
     console.log('Produits récupérés depuis API =>', productsData);
 
     // Si le panier est vide afficher ceci
-    if (productTable.length === 0) {
+    if (productTable === null || productTable == 0) {
         document.getElementById('cart__items').insertAdjacentHTML('beforeend', `<p>Votre panier est vide. :-(</p>`);
         document.getElementById('cart__items').style.textAlign = "center";
         return
@@ -185,159 +185,207 @@ async function getTotalProducts() {
 
 
 /* -------------------------------------------------------------------------------- 
-FORMULAIRE D'ENVOI
+FORMULAIRE D'ENVOI et VALIDATION DES CHAMPS
 -------------------------------------------------------------------------------- */
-let order = document.getElementById("order");
-let valueOrder;
+function getForm() {
 
-// Input firstName
-let firstName = document.getElementById("firstName");
-let messErrorFirstName = document.getElementById("firstNameErrorMsg");
-firstName.addEventListener("input", (e) => {
-    let valueFirstName;
-    if (e.target.value.length == 0) {
-        valueFirstName = null;
-    }
-    else if (e.target.value.length < 3 || e.target.value.length > 30) {
-        messErrorFirstName.textContent = "Le prénom doit contenir entre 3 et 30 caractères.";
-        messErrorFirstName.style.color = "#fbbcbc";
-        valueFirstName = null;
-    }
-    if (e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{3,30}$/)) {
-        messErrorFirstName.textContent = "Le prénom est valide.";
-        messErrorFirstName.style.color = "#4dff00";
-        valueFirstName = e.target.value;
-    }
-    if (!e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{3,30}$/) && e.target.value.length > 3 && e.target.value.length < 30) {
-        messErrorFirstName.textContent = "Le prénom ne doit pas contenir de caratères spéciaux.";
-        messErrorFirstName.style.color = "#fbbcbc";
-        valueFirstName = null;
-    }
-})
+    // Input firstName
+    let firstName = document.getElementById("firstName");
+    let messErrorFirstName = document.getElementById("firstNameErrorMsg");
+    firstName.addEventListener("input", (e) => {
+        let valueFirstName;
+        if (e.target.value.length == 0) {
+            valueFirstName = null;
+        }
+        else if (e.target.value.length < 3 || e.target.value.length > 30) {
+            messErrorFirstName.textContent = "Le prénom doit contenir entre 3 et 30 caractères.";
+            messErrorFirstName.style.color = "#fbbcbc";
+            valueFirstName = null;
+        }
+        if (e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{3,30}$/)) {
+            messErrorFirstName.textContent = "Le prénom est valide.";
+            messErrorFirstName.style.color = "#4dff00";
+            valueFirstName = e.target.value;
+            console.log("valueFirstName =>", valueFirstName);
+        }
+        if (!e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{3,30}$/) && e.target.value.length > 3 && e.target.value.length < 30) {
+            messErrorFirstName.textContent = "Le prénom ne doit pas contenir de caratères spéciaux.";
+            messErrorFirstName.style.color = "#fbbcbc";
+            valueFirstName = null;
+        }
+    })
 
-// Input lasttName
-let lasttName = document.getElementById("lastName");
-let messErrorLastName = document.getElementById("lastNameErrorMsg");
-lasttName.addEventListener("input", (e) => {
-    let valueLastName;
-    if (e.target.value.length == 0) {
-        valueLastName = null;
-    }
-    else if (e.target.value.length < 3 || e.target.value.length > 30) {
-        messErrorLastName.textContent = "Le nom doit contenir entre 3 et 30 caractères.";
-        messErrorLastName.style.color = "#fbbcbc";
-        valueLastName = null;
-    }
-    if (e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{3,30}$/)) {
-        messErrorLastName.textContent = "Le nom est valide.";
-        messErrorLastName.style.color = "#4dff00";
-        valueLastName = e.target.value;
-    }
-    if (!e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{3,30}$/) && e.target.value.length > 3 && e.target.value.length < 30) {
-        messErrorLastName.textContent = "Le nom ne doit pas contenir de caratères spéciaux.";
-        messErrorLastName.style.color = "#fbbcbc";
-        valueLastName = null;
-    }
-})
+    // Input lasttName
+    let lasttName = document.getElementById("lastName");
+    let messErrorLastName = document.getElementById("lastNameErrorMsg");
+    lasttName.addEventListener("input", (e) => {
+        let valueLastName;
+        if (e.target.value.length == 0) {
+            valueLastName = null;
+        }
+        else if (e.target.value.length < 3 || e.target.value.length > 30) {
+            messErrorLastName.textContent = "Le nom doit contenir entre 3 et 30 caractères.";
+            messErrorLastName.style.color = "#fbbcbc";
+            valueLastName = null;
+        }
+        if (e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{3,30}$/)) {
+            messErrorLastName.textContent = "Le nom est valide.";
+            messErrorLastName.style.color = "#4dff00";
+            valueLastName = e.target.value;
+            console.log("valueLastName =>", valueLastName);
+        }
+        if (!e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{3,30}$/) && e.target.value.length > 3 && e.target.value.length < 30) {
+            messErrorLastName.textContent = "Le nom ne doit pas contenir de caratères spéciaux.";
+            messErrorLastName.style.color = "#fbbcbc";
+            valueLastName = null;
+        }
+    })
 
-// Inout address
-let address = document.getElementById("address");
-let messErrorAddress = document.getElementById("addressErrorMsg");
-address.addEventListener("input", (e) => {
-    let valueAddress;
-    if (e.target.value.length == 0) {
-        valueAddress = null;
-    }
-    else if (e.target.value.length < 10 || e.target.value.length > 70) {
-        messErrorAddress.textContent = "L'adresse doit contenir entre 10 et 70 caractères.";
-        messErrorAddress.style.color = "#fbbcbc";
-        valueAddress = null;
-    }
-    if (e.target.value.match(/^[a-z A-Z 0-9 éèàâêîôûçäëïöü - ']{10,70}$/)) {
-        messErrorAddress.textContent = "l'adresse est valide.";
-        messErrorAddress.style.color = "#4dff00";
-        valueAddress = e.target.value;
-    }
-    if (!e.target.value.match(/^[a-z A-Z 0-9 éèàâêîôûçäëïöü - ']{10,70}$/) && e.target.value.length > 10 && e.target.value.length < 70) {
-        messErrorAddress.textContent = "L'adresse ne doit pas contenir de caratères spéciaux.";
-        messErrorAddress.style.color = "#fbbcbc";
-        valueAddress = null;
-    }
-})
+    // Inout address
+    let address = document.getElementById("address");
+    let messErrorAddress = document.getElementById("addressErrorMsg");
+    address.addEventListener("input", (e) => {
+        let valueAddress;
+        if (e.target.value.length == 0) {
+            valueAddress = null;
+        }
+        else if (e.target.value.length < 10 || e.target.value.length > 70) {
+            messErrorAddress.textContent = "L'adresse doit contenir entre 10 et 70 caractères.";
+            messErrorAddress.style.color = "#fbbcbc";
+            valueAddress = null;
+        }
+        if (e.target.value.match(/^[a-z A-Z 0-9 éèàâêîôûçäëïöü - ']{10,70}$/)) {
+            messErrorAddress.textContent = "l'adresse est valide.";
+            messErrorAddress.style.color = "#4dff00";
+            valueAddress = e.target.value;
+            console.log("valueAddress =>", valueAddress);
+        }
+        if (!e.target.value.match(/^[a-z A-Z 0-9 éèàâêîôûçäëïöü - ']{10,70}$/) && e.target.value.length > 10 && e.target.value.length < 70) {
+            messErrorAddress.textContent = "L'adresse ne doit pas contenir de caratères spéciaux.";
+            messErrorAddress.style.color = "#fbbcbc";
+            valueAddress = null;
+        }
+    })
 
-// Input city
-let city = document.getElementById("city");
-let messErrorCity = document.getElementById("cityErrorMsg");
-city.addEventListener("input", (e) => {
-    let valueCity;
-    if (e.target.value.length == 0) {
-        valueCity = null;
-    }
-    else if (e.target.value.length < 2 || e.target.value.length > 30) {
-        messErrorCity.textContent = "La ville doit contenir entre 2 et 30 caractères.";
-        messErrorCity.style.color = "#fbbcbc";
-        valueCity = null;
-    }
-    if (e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{2,30}$/)) {
-        messErrorCity.textContent = "La ville est valide.";
-        messErrorCity.style.color = "#4dff00";
-        valueCity = e.target.value;
-    }
-    if (!e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{2,30}$/) && e.target.value.length > 2 && e.target.value.length < 30) {
-        messErrorCity.textContent = "La ville ne doit pas contenir de caratères spéciaux.";
-        messErrorCity.style.color = "#fbbcbc";
-        valueCity = null;
-    }
-})
+    // Input city
+    let city = document.getElementById("city");
+    let messErrorCity = document.getElementById("cityErrorMsg");
+    city.addEventListener("input", (e) => {
+        let valueCity;
+        if (e.target.value.length == 0) {
+            valueCity = null;
+        }
+        else if (e.target.value.length < 2 || e.target.value.length > 30) {
+            messErrorCity.textContent = "La ville doit contenir entre 2 et 30 caractères.";
+            messErrorCity.style.color = "#fbbcbc";
+            valueCity = null;
+        }
+        if (e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{2,30}$/)) {
+            messErrorCity.textContent = "La ville est valide.";
+            messErrorCity.style.color = "#4dff00";
+            valueCity = e.target.value;
+            console.log("valueCity =>", valueCity);
+        }
+        if (!e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{2,30}$/) && e.target.value.length > 2 && e.target.value.length < 30) {
+            messErrorCity.textContent = "La ville ne doit pas contenir de caratères spéciaux.";
+            messErrorCity.style.color = "#fbbcbc";
+            valueCity = null;
+        }
+    })
 
-// Input email
-let email = document.getElementById("email");
-email.addEventListener("input", (e) => {
-    let messErrorEmail = document.getElementById("emailErrorMsg");
-    let valueEmail;
-    if (e.target.value.length == 0) {
-        messErrorEmail.textContent = "";
-        valueEmail = null;
-    }
-    else if (e.target.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
-        messErrorEmail.textContent = "";
-        valueEmail = e.target.value;
-    }
-    if (e.target.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
-        messErrorEmail.textContent = "L'email est valide";
-        messErrorEmail.style.color = "#4dff00";
-        valueEmail = e.target.value;
-    }
-    if (!e.target.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/) && !e.target.value.length == 0) {
-        messErrorEmail.textContent = "L'email n'est pas valide";
-        messErrorEmail.style.color = "#fbbcbc";
-        valueEmail = null;
-    }
-})
+    // Input email
+    let email = document.getElementById("email");
+    email.addEventListener("input", (e) => {
+        let messErrorEmail = document.getElementById("emailErrorMsg");
+        let valueEmail;
+        if (e.target.value.length == 0) {
+            messErrorEmail.textContent = "";
+            valueEmail = null;
+        }
+        else if (e.target.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+            messErrorEmail.textContent = "";
+            valueEmail = e.target.value;
+            console.log("valueEmail =>", valueEmail);
+        }
+        if (e.target.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+            messErrorEmail.textContent = "L'email est valide";
+            messErrorEmail.style.color = "#4dff00";
+            valueEmail = e.target.value;
+        }
+        if (!e.target.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/) && !e.target.value.length == 0) {
+            messErrorEmail.textContent = "L'email n'est pas valide";
+            messErrorEmail.style.color = "#fbbcbc";
+            valueEmail = null;
+        }
+    })
 
-// Bouton Commander !
-const btnEnvoiCommande = document.getElementById("order");
+}
+getForm();
 
-btnEnvoiCommande.addEventListener("click", (e) => {
-    e.preventDefault();
 
-    // Récupérer les données du formulaire
-    const formValues = {
-        prenom : document.querySelector("#firstName").value,
-        nom : document.querySelector("#lastName").value,
-        adresse : document.querySelector("#address").value,
-        ville : document.querySelector("#city").value,
-        email : document.querySelector("#email").value
-    }
+/* -------------------------------------------------------------------------------- 
+// ENVOI DU FORMULAIRE : POST
+-------------------------------------------------------------------------------- */
+function postForm() {
+    const btnCommandForm = document.getElementById('order');
 
-    // Insérer les données dans le localStorage
-    localStorage.setItem("formValues", JSON.stringify(formValues));
+    //  Récupération des inputs dans des variables
+    let inputFirstName = document.getElementById('firstName');
+    let inputLastName = document.getElementById('lastName');
+    let inputAddress = document.getElementById('address');
+    let inputCity = document.getElementById('city');
+    let inputEmail = document.getElementById('email');
 
-    // Envoyer toutes les données (formulaire et produits) vers confirmation
-    const sendToConfirmation = {
-        productTable,
-        formValues
-    }
-    console.log('Envoyer vers la page confirmation', sendToConfirmation);
-})
+    // Creation de l'événement au click 
+    btnCommandForm.addEventListener('click', function (event) {
+        console.log("event =>", event);
 
+        // Si la valeur de chaque input n'est pas renseignée
+        if (!inputFirstName.value || !inputLastName.value || !inputCity.value || !inputAddress.value || !inputEmail.value) {
+            alert("Veuillez renseigner tous les champs !");
+            event.preventDefault();
+        } else {
+            // Créer un tableau pour passer les infos dedans
+            let productsId = [];
+            for (let j = 0; j < productTable.lenght; j++) {
+                productsId.push(productTable[i].id)
+            }
+            console.log("productsId", productsId);
+
+            // Objet contact contenant les infos du formulaire à envoyer au serveur
+            const order = {
+                contact: {
+                    firstName: inputFirstName.value,
+                    lastName: inputLastName.value,
+                    address: inputAddress.value,
+                    city: inputCity.value,
+                    email: inputEmail.value,
+                },
+                // Objet products contenant le ou les produits à envoyer au serveur
+                products: productsId,
+            };
+
+            let options = {
+                method: 'POST',
+                body: JSON.stringify(order),
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            };
+
+            // Envoyer les infos du tableau au serveur
+            fetch('http://localhost:3000/api/products/order', options)
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log("data =>", data);
+
+                    document.location.href = './confirmation.html?orderId=' + data.orderId;
+                })
+                .catch((error) => {
+                    alert("Problème avec fetch" + error.message);
+                })
+        }
+
+    })
+}
+postForm();
