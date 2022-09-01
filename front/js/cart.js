@@ -241,7 +241,7 @@ function getForm() {
         }
     })
 
-    // Inout address
+    // Input address
     let address = document.getElementById("address");
     let messErrorAddress = document.getElementById("addressErrorMsg");
     address.addEventListener("input", (e) => {
