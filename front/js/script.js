@@ -3,7 +3,6 @@ fetch("http://localhost:3000/api/products")
 
 .then(data => data.json())
 .then(jsonListProduct => {
-    console.log('Affichage des produits du catalogue =>', jsonListProduct);
 
      // Changement des éléments du <head></head> : META TITLE
      document.title = "KANAP | Une gamme d'articles exclusifs";

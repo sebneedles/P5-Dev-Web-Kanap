@@ -2,7 +2,6 @@
 Récupération du produit par ID
 -------------------------------------------------------------------------------- */
 const product = window.location.search.split("?").join("");
-console.log('ID du produit =>', product);
 
 // Création table vide
 let productData = [];
@@ -12,7 +11,6 @@ const fetchProduct = async () => {
     .then((response) => response.json())
     .then((promise) => {
         productData = promise;
-        console.log('Tableau du produit =>', productData);
     });
 };
 
@@ -92,9 +90,7 @@ const addBasket = () => {
 
 
         const selectColor = document.getElementById("colors");
-        const selectQuantity = document.getElementById("quantity");  
-        console.log('affiche la couleur choisie =>', selectColor.value);
-        console.log('affiche la valeur du tableau =>', productTable);
+        const selectQuantity = document.getElementById("quantity");
 
         const storageProduct = {
             colors: `${selectColor.value}`,
@@ -114,7 +110,7 @@ const addBasket = () => {
         FENETRE ALERT => AJOUT AU PANIER
         -------------------------------------------------------------------------------- */
         const windowConfirmBasket = () => {
-            console.log("coucou");
+
             if (window.confirm(`Le produit ${productData.name} sera ajouté au panier :
             OK => pour voir le panier ?
             Annuler => pour retourner au catalogue ?
@@ -124,24 +120,16 @@ const addBasket = () => {
                 window.location.href = "./index.html";
             }
         }
-        // alert(`
-        // Le produit ${productData.name} sera ajouté au panier.\n
-        // Voir le panier`);
-        // location = "./cart.html";
 
 
         /* -------------------------------------------------------------------------------- 
         SI IL Y A UN MEME PRODUIT !!
         -------------------------------------------------------------------------------- */
         if (productTable) {
-            console.log('storage product avant =>', storageProduct);
+            
             let sameProductId = productTable.find(myProduct => myProduct.id == storageProduct.id && myProduct.colors == storageProduct.colors);
             if (sameProductId != undefined) {
-                console.log('produit ID =>', sameProductId);
-                console.log('total quantité produit =>', Number(storageProduct.quantity) + Number(sameProductId.quantity));
                 sameProductId.quantity = `${Number(storageProduct.quantity) + Number(sameProductId.quantity)}`;
-                console.log('storage product après =>', storageProduct);
-                
             }
             else {
                 productTable.push(storageProduct);
@@ -149,7 +137,6 @@ const addBasket = () => {
             }
         }
 
-        console.log('produits ajoutés au localStorage =>', productTable);
         localStorage.setItem("product", JSON.stringify(productTable));
         windowConfirmBasket();
     });
