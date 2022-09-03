@@ -124,10 +124,6 @@ const addBasket = () => {
                 window.location.href = "./index.html";
             }
         }
-        // alert(`
-        // Le produit ${productData.name} sera ajouté au panier.\n
-        // Voir le panier`);
-        // location = "./cart.html";
 
 
         /* -------------------------------------------------------------------------------- 

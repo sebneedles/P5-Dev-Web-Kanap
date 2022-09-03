@@ -156,12 +156,10 @@ const displayProductsBasket = (productStorage, productApi) => {
         productTable = productTable.filter(element => element.id !== productStorageRemoveId || element.colors !== productStorageRemoveColors);
         localStorage.setItem("product", JSON.stringify(productTable));
         event.target.closest('.cart__item').remove();
-        alert(`Le modèle ${productApi.name} à été retiré du panier !`);
+        alert(`Le modèle ${productApi.name} sera retiré du panier !`);
         location.reload();
         console.log(productTable)
     })
-
-
     getTotalProducts();
 }
 
@@ -196,9 +194,11 @@ function getForm() {
         let valueFirstName;
         if (e.target.value.length == 0) {
             valueFirstName = null;
+            messErrorFirstName.textContent = null;
+            console.log("event first name =>",  e);
         }
-        else if (e.target.value.length < 3 || e.target.value.length > 30) {
-            messErrorFirstName.textContent = "Le prénom doit contenir entre 3 et 30 caractères.";
+        else if (e.target.value.length < 3 || e.target.value.length > 30 && e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{3,30}$/)) {
+            messErrorFirstName.textContent = "Le prénom doit contenir entre 3 et 30 caractères et ne pas avoir de caractères spéciaux.";
             messErrorFirstName.style.color = "#fbbcbc";
             valueFirstName = null;
         }
@@ -207,11 +207,6 @@ function getForm() {
             messErrorFirstName.style.color = "#4dff00";
             valueFirstName = e.target.value;
             console.log("valueFirstName =>", valueFirstName);
-        }
-        if (!e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{3,30}$/) && e.target.value.length > 3 && e.target.value.length < 30) {
-            messErrorFirstName.textContent = "Le prénom ne doit pas contenir de caratères spéciaux.";
-            messErrorFirstName.style.color = "#fbbcbc";
-            valueFirstName = null;
         }
     })
 
@@ -222,9 +217,10 @@ function getForm() {
         let valueLastName;
         if (e.target.value.length == 0) {
             valueLastName = null;
+            messErrorLastName.textContent = null;
         }
-        else if (e.target.value.length < 3 || e.target.value.length > 30) {
-            messErrorLastName.textContent = "Le nom doit contenir entre 3 et 30 caractères.";
+        else if (e.target.value.length < 3 || e.target.value.length > 30 && e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{3,30}$/)) {
+            messErrorLastName.textContent = "Le nom doit contenir entre 3 et 30 caractères et ne pas avoir de caractères spéciaux.";
             messErrorLastName.style.color = "#fbbcbc";
             valueLastName = null;
         }
@@ -233,11 +229,6 @@ function getForm() {
             messErrorLastName.style.color = "#4dff00";
             valueLastName = e.target.value;
             console.log("valueLastName =>", valueLastName);
-        }
-        if (!e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{3,30}$/) && e.target.value.length > 3 && e.target.value.length < 30) {
-            messErrorLastName.textContent = "Le nom ne doit pas contenir de caratères spéciaux.";
-            messErrorLastName.style.color = "#fbbcbc";
-            valueLastName = null;
         }
     })
 
@@ -248,9 +239,10 @@ function getForm() {
         let valueAddress;
         if (e.target.value.length == 0) {
             valueAddress = null;
+            messErrorAddress.textContent = null;
         }
-        else if (e.target.value.length < 10 || e.target.value.length > 70) {
-            messErrorAddress.textContent = "L'adresse doit contenir entre 10 et 70 caractères.";
+        else if (e.target.value.length < 10 || e.target.value.length > 70 && e.target.value.match(/^[a-z A-Z 0-9 éèàâêîôûçäëïöü - ']{10,70}$/)) {
+            messErrorAddress.textContent = "L'adresse doit contenir entre 10 et 70 caractères et ne pas avoir de caractères spéciaux.";
             messErrorAddress.style.color = "#fbbcbc";
             valueAddress = null;
         }
@@ -259,11 +251,6 @@ function getForm() {
             messErrorAddress.style.color = "#4dff00";
             valueAddress = e.target.value;
             console.log("valueAddress =>", valueAddress);
-        }
-        if (!e.target.value.match(/^[a-z A-Z 0-9 éèàâêîôûçäëïöü - ']{10,70}$/) && e.target.value.length > 10 && e.target.value.length < 70) {
-            messErrorAddress.textContent = "L'adresse ne doit pas contenir de caratères spéciaux.";
-            messErrorAddress.style.color = "#fbbcbc";
-            valueAddress = null;
         }
     })
 
@@ -274,8 +261,9 @@ function getForm() {
         let valueCity;
         if (e.target.value.length == 0) {
             valueCity = null;
+            messErrorCity.textContent = null;
         }
-        else if (e.target.value.length < 2 || e.target.value.length > 30) {
+        else if (e.target.value.length < 2 || e.target.value.length > 30 && e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{2,30}$/)) {
             messErrorCity.textContent = "La ville doit contenir entre 2 et 30 caractères.";
             messErrorCity.style.color = "#fbbcbc";
             valueCity = null;
@@ -285,11 +273,6 @@ function getForm() {
             messErrorCity.style.color = "#4dff00";
             valueCity = e.target.value;
             console.log("valueCity =>", valueCity);
-        }
-        if (!e.target.value.match(/^[a-z A-Z éèàâêîôûçäëïöü - ']{2,30}$/) && e.target.value.length > 2 && e.target.value.length < 30) {
-            messErrorCity.textContent = "La ville ne doit pas contenir de caratères spéciaux.";
-            messErrorCity.style.color = "#fbbcbc";
-            valueCity = null;
         }
     })
 
@@ -301,13 +284,9 @@ function getForm() {
         if (e.target.value.length == 0) {
             messErrorEmail.textContent = "";
             valueEmail = null;
+            messErrorEmail.textContent = null;
         }
         else if (e.target.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
-            messErrorEmail.textContent = "";
-            valueEmail = e.target.value;
-            console.log("valueEmail =>", valueEmail);
-        }
-        if (e.target.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
             messErrorEmail.textContent = "L'email est valide";
             messErrorEmail.style.color = "#4dff00";
             valueEmail = e.target.value;
@@ -339,11 +318,12 @@ function postForm() {
     // Creation de l'événement au click 
     btnCommandForm.addEventListener('click', function (event) {
         console.log("event =>", event);
+        event.preventDefault();
 
         // Si la valeur de chaque input n'est pas renseignée
         if (!inputFirstName.value || !inputLastName.value || !inputCity.value || !inputAddress.value || !inputEmail.value) {
             alert("Veuillez renseigner tous les champs !");
-            event.preventDefault();
+            //event.preventDefault();
         } else {
             // Créer un tableau pour passer les infos dedans
             let productsId = [];
